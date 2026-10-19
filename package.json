@@ -1,0 +1,21 @@
+{
+  "name": "multiwatts",
+  "version": "1.0.0",
+  "description": "Gestor multi-cuenta de WhatsApp con ventanas acoplables y suite de mensajes rápidos",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "smoke": "electron . --smoke-test"
+  },
+  "keywords": [
+    "whatsapp",
+    "multi-cuenta",
+    "electron",
+    "mensajes-rapidos"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^43.3.0"
+  }
+}

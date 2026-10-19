@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MultiWhats - Gestor Multi-Cuenta</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'; img-src 'self' data:;" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- ============ BARRA LATERAL ============ -->
+    <aside id="sidebar">
+      <div class="brand">
+        <div class="brand-logo" title="MultiWhats">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0b141a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+            <path d="M9 10h6" /><path d="M9 14h3" />
+          </svg>
+        </div>
+        <div class="brand-text">
+          <strong>MultiWhats</strong>
+          <span>Multi-cuenta</span>
+        </div>
+      </div>
+
+      <div class="side-title">Cuentas</div>
+      <ul id="account-list"></ul>
+
+      <button id="btn-add" class="btn-add" title="Agregar cuenta de WhatsApp">
+        <span class="plus">＋</span><span class="btn-add-label">Agregar cuenta</span>
+      </button>
+
+      <div class="sidebar-footer">
+        <div id="toast" class="toast"></div>
+        <div class="footer-row">
+          <span class="version">v1.0 · Tema oscuro</span>
+          <button id="btn-collapse" class="icon-btn" title="Colapsar barra lateral">◀</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ============ ÁREA PRINCIPAL ============ -->
+    <main id="main">
+      <header id="topbar">
+        <div class="topbar-left">
+          <span class="section-title">WhatsApp</span>
+        </div>
+
+        <div class="topbar-right">
+          <button id="btn-cleanup" class="cleanup-btn hidden" title="Eliminar las sesiones antiguas de WhatsApp que ya no usa ninguna cuenta y liberar espacio en disco">🧹 Liberar espacio</button>
+          <div id="zoom-controls" class="zoom-controls" title="Zoom de la cuenta enfocada (haz clic en una cuenta para ajustarla)">
+            <span class="zoom-label">Zoom</span>
+            <button id="zoom-out" class="zoom-btn" title="Reducir zoom">−</button>
+            <button id="zoom-val" class="zoom-btn zoom-val" title="Restablecer zoom automático">Auto</button>
+            <button id="zoom-in" class="zoom-btn" title="Aumentar zoom">＋</button>
+          </div>
+          <button id="btn-panel" class="panel-toggle" title="Abrir / cerrar mensajes rápidos">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.7 15L2 22l5.2-1.3A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4-1.1L7 19l-1.9.5.5-1.9-.1-.1A8 8 0 1 1 12 20z"/><path d="M8 11a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm4 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm4 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/></svg>
+            Mensajes rápidos <span id="msg-count" class="msg-count">0</span>
+          </button>
+        </div>
+      </header>
+
+      <div id="content-row">
+        <!-- Área donde el proceso principal acopla las ventanas de WhatsApp -->
+        <div id="views-area">
+          <div id="empty-state">
+            <div class="empty-icon">
+              <svg viewBox="0 0 24 24" width="46" height="46" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+              </svg>
+            </div>
+            <h2>Conecta tus cuentas de WhatsApp</h2>
+            <p>Agrega una cuenta desde la barra lateral y escanea el código QR<br/>que aparece en la ventana con tu teléfono.</p>
+            <button id="btn-empty-add" class="btn-empty-add">＋ Agregar mi primera cuenta</button>
+          </div>
+        </div>
+
+        <!-- Panel de mensajes rápidos -->
+        <div id="quick-panel">
+          <div id="panel-inner">
+            <div class="panel-header">
+              <span class="panel-title">Mensajes rápidos</span>
+              <button id="btn-panel-close" class="icon-btn" title="Cerrar panel">✕</button>
+            </div>
+
+            <input id="qsearch" type="text" placeholder="Buscar mensaje…" autocomplete="off" spellcheck="false" />
+
+            <div id="qcats"></div>
+
+            <button id="btn-new-msg" class="btn-new-msg">＋ Nuevo mensaje</button>
+
+            <form id="qform" class="hidden">
+              <label class="form-label" for="qtext">Texto del mensaje</label>
+              <textarea id="qtext" rows="4" placeholder="Escribe aquí tu mensaje…" spellcheck="false"></textarea>
+              <label class="form-label" for="qcat">Categoría</label>
+              <input id="qcat" list="cat-options" placeholder="Ej. Saludos" autocomplete="off" spellcheck="false" />
+              <datalist id="cat-options"></datalist>
+              <div class="form-actions">
+                <button type="submit" id="qsave" class="btn-primary">Guardar</button>
+                <button type="button" id="qcancel" class="btn-ghost">Cancelar</button>
+              </div>
+            </form>
+
+            <div id="qlist"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
